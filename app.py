@@ -2,7 +2,7 @@ from flask import Flask, url_for, render_template, request, flash, redirect
 from flask import jsonify
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from funciones_libreria import myspgend
+from funciones_libreria import myspgend as genero
 import json
 import subprocess
 import os
@@ -65,7 +65,7 @@ def upload():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             dir_path = str(os.path.dirname(os.path.realpath(__file__)))
-            genero=myspgend(filename.strip('.wav'),dir_path)
+            genero=genero(filename.strip('.wav'),dir_path)
             frecuencia=mysp.myspf0med(filename.strip('.wav'),dir_path) #asignamos la frecuencia fundamental
             respuesta=Rango(genero,frecuencia)
             return jsonify(respuesta)
