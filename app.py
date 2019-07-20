@@ -3,7 +3,7 @@ from flask import jsonify
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from funciones_libreria import myspgend
-from flask_restplus import Resource, Api
+
 mysp=__import__("my-voice-analysis")
 import json
 import subprocess
