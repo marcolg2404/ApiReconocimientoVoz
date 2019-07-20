@@ -2,7 +2,9 @@ from flask import Flask, url_for, render_template, request, flash, redirect
 from flask import jsonify
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from funciones_libreria import myspgend as genero
+from funciones_libreria import myspgend
+from flask_restplus import Resource, Api
+mysp=__import__("my-voice-analysis")
 import json
 import subprocess
 import os
@@ -15,8 +17,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "eWVf+[uZS}^Bl'{"
 app.debug = True
 
-mysp=__import__("my-voice-analysis") # importamos la libreria de python
-#funcion que retornara el rango etario y el genero de una persona
 def Rango( genero ,frecuencia):
     if(genero == 'hombre'):
         if (frecuencia <= 121.5 and frecuencia >110):
@@ -62,12 +62,20 @@ def upload():
         if file.filename == '':
             return jsonify("Error")
         if file and allowed_file(file.filename):
+            global filename
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            global dir_path
             dir_path = str(os.path.dirname(os.path.realpath(__file__)))
-            genero=genero(filename.strip('.wav'),dir_path)
-            frecuencia=mysp.myspf0med(filename.strip('.wav'),dir_path) #asignamos la frecuencia fundamental
-            respuesta=Rango(genero,frecuencia)
-            return jsonify(respuesta)
+            return jsonify("Archivo subido con exito")
+    if request.method == 'GET':
+        genero=myspgend(filename.strip('.wav'),dir_path)
+        frecuencia=mysp.myspf0med(filename.strip('.wav'),dir_path) #asignamos la frecuencia fundamental
+        respuesta=Rango(genero,frecuencia)
+        return jsonify(respuesta)
 
-app.run("localhost","8080")
+
+
+
+
+app.run(host='0.0.0.0')
